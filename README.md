@@ -1,6 +1,6 @@
 # Farming-Frenzy
  
-## IMPORTANT..
+## IMPORTANT
 
 ### Level 1 Controls:
 * SPACE - Sell chicken
