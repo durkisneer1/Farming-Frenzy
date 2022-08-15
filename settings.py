@@ -1,0 +1,1 @@
+WIDTH, HEIGHT = 64, 64
