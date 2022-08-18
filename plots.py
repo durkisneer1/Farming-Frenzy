@@ -140,14 +140,14 @@ class SheepPlot:
                 Sheep(self.display, pos, self.sheep_group)
         elif self.level == 2:
             self.score = 0
-            self.shp_stats.shp_count(self.score, 25)
-            for _ in range(25):
+            self.shp_stats.shp_count(self.score, 20)
+            for _ in range(20):
                 pos = (random.randint(2, WIDTH-23), random.randint(2, HEIGHT-4))
                 Sheep(self.display, pos, self.sheep_group)
         elif self.level == 3:
             self.score = 0
-            self.shp_stats.shp_count(self.score, 50)
-            for _ in range(50):
+            self.shp_stats.shp_count(self.score, 40)
+            for _ in range(40):
                 pos = (random.randint(2, WIDTH-23), random.randint(2, HEIGHT-4))
                 Sheep(self.display, pos, self.sheep_group)
 
@@ -167,13 +167,13 @@ class SheepPlot:
                             self.level = 2
                             self.spawn()
                     elif self.level == 2:
-                        self.shp_stats.shp_count(self.score, 25)
-                        if self.score == 25:
+                        self.shp_stats.shp_count(self.score, 20)
+                        if self.score == 20:
                             self.level = 3
                             self.spawn()
                     elif self.level == 3:
-                        self.shp_stats.shp_count(self.score, 50)
-                        if self.score == 50:
+                        self.shp_stats.shp_count(self.score, 40)
+                        if self.score == 40:
                             self.level = 4 # end
 
     def collisions(self):
@@ -237,7 +237,7 @@ class CowPlot:
         Bucket(self.display, self.bucket_group)
 
         self.points = 0
-        self.cows_left = 35
+        self.cows_left = 50
         self.cow_stats = CowStats(self.display, self.cows_left)
         self.final_cow = False
 

@@ -8,7 +8,7 @@ from screens import TitleScreen
 pg.mixer.pre_init(48000, -16, 2, 512)
 pg.init()
 screen = pg.display.set_mode((HEIGHT, WIDTH), pg.SCALED)
-pg.display.set_caption('Farmer Frenzy')
+pg.display.set_caption('Farming Frenzy')
 pg.display.set_icon(pg.image.load('assets/chicken/egg.png'))
 clock = pg.time.Clock()
 pg.mouse.set_visible(False)
@@ -16,6 +16,7 @@ pg.mouse.set_visible(False)
 class Game:
     def __init__(self):
         
+        self.title_screen = TitleScreen(screen)
         self.chicken_plot = ChickenPlot(screen)
         self.sheep_plot = SheepPlot(screen)
         self.cow_plot = CowPlot(screen)
@@ -24,10 +25,7 @@ class Game:
         self.level_info = LevelInfo(None, screen, None)
         self.cursor = Cursor(screen)
 
-        self.title_screen = TitleScreen(screen)
-
         self.current_time = 0
-        
         self.music_played = False
         pg.mixer.music.set_volume(0.5)
 
@@ -57,9 +55,9 @@ class Game:
         self.trans_fade.alpha = 255
         self.transition('  SELL\nCHICKEN!!', (9, 14))
 
-        level_1 = True
-        level_2 = False
-        level_3 = False
+        level_1 = True # set for True
+        level_2 = False # set for False
+        level_3 = False # set for False
         back_to_menu = False
         running = True
         while running:
@@ -115,10 +113,10 @@ class Game:
                     self.transition(' You\nWon !!', (17, 14))
                     back_to_menu = True
                 elif self.cow_plot.final_cow:
-                    level_3 = False
                     self.transition(' You\nLost .', (17, 14))
-                    back_to_menu = True
+                    running = False
                     self.music_played = False
+                    self.cow_plot = CowPlot(screen)
             elif back_to_menu:
                 self.chicken_plot = ChickenPlot(screen)
                 self.sheep_plot = SheepPlot(screen)
