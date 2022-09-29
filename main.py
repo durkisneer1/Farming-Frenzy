@@ -3,20 +3,13 @@ from settings import *
 from plots import ChickenPlot, SheepPlot, CowPlot
 from trans import Transition, LevelInfo
 from cursor import Cursor
-from screens import TitleScreen
-
-pg.mixer.pre_init(48000, -16, 2, 512)
-pg.init()
-screen = pg.display.set_mode((HEIGHT, WIDTH), pg.SCALED)
-pg.display.set_caption('Farming Frenzy')
-pg.display.set_icon(pg.image.load('assets/chicken/egg.png'))
-clock = pg.time.Clock()
-pg.mouse.set_visible(False)
+from screens import TitleScreen, ControlScreen
 
 class Game:
     def __init__(self):
-        
         self.title_screen = TitleScreen(screen)
+        self.control_screen = ControlScreen(screen)
+
         self.chicken_plot = ChickenPlot(screen)
         self.sheep_plot = SheepPlot(screen)
         self.cow_plot = CowPlot(screen)
@@ -30,7 +23,6 @@ class Game:
         pg.mixer.music.set_volume(0.5)
 
     def menu(self):
-
         pg.mixer.music.unload()
         running = True
         while running:
@@ -50,28 +42,40 @@ class Game:
             clock.tick(30)
 
     def main(self):
-
         screen.fill('black')
         self.trans_fade.alpha = 255
-        self.transition('  SELL\nCHICKEN!!', (9, 14))
 
-        level_1 = True # set for True
+        control_menu = True # set for True
+        level_1 = False # set for False
         level_2 = False # set for False
         level_3 = False # set for False
         back_to_menu = False
         running = True
+        
         while running:
-
             events = pg.event.get()
             for event in events:
                 if event.type == pg.QUIT:
                     pg.quit()
                     raise SystemExit
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        pg.quit()
+                        raise SystemExit
 
             mpos = pg.mouse.get_pos()
             mpressed = pg.mouse.get_pressed()
 
-            if level_1:
+            if control_menu:
+                self.control_screen.update()
+                for ev in events:
+                    if ev.type == pg.KEYDOWN:
+                        if ev.key == pg.K_RETURN:
+                            control_menu = False
+                            self.transition('  SELL\nCHICKEN!!', (9, 14))
+                            level_1 = True
+
+            elif level_1:
                 if self.music_played == False:
                     pg.mixer.music.unload()
                     pg.mixer.music.load('audio/music/Lay Down And Egg.mp3')
@@ -80,11 +84,13 @@ class Game:
 
                 self.chicken_plot.update(events, mpos)
                 self.trans_fade.update('out')
+
                 if self.chicken_plot.cash_count == 20: # set for 20
                     level_1 = False
                     self.transition(' Herd\nSheep!!', (15, 14))
                     level_2 = True
                     self.music_played = False
+
             elif level_2:
                 if self.music_played == False:
                     pg.mixer.music.unload()
@@ -94,11 +100,13 @@ class Game:
 
                 self.sheep_plot.update(events)
                 self.trans_fade.update('out')
+
                 if self.sheep_plot.level == 4: # set for 4
                     level_2 = False
                     self.transition(' Milk\nCows!!', (18, 14))
                     level_3 = True
                     self.music_played = False
+
             elif level_3:
                 if self.music_played == False:
                     pg.mixer.music.unload()
@@ -108,6 +116,7 @@ class Game:
 
                 self.cow_plot.update(events, mpressed, mpos, self.cursor.rect)
                 self.trans_fade.update('out')
+
                 if self.cow_plot.points == 50: # set for 50
                     level_3 = False
                     self.transition(' You\nWon !!', (17, 14))
@@ -117,6 +126,7 @@ class Game:
                     running = False
                     self.music_played = False
                     self.cow_plot = CowPlot(screen)
+
             elif back_to_menu:
                 self.chicken_plot = ChickenPlot(screen)
                 self.sheep_plot = SheepPlot(screen)
@@ -129,13 +139,12 @@ class Game:
             clock.tick(30)
 
     def transition(self, txt, pos):
-        
         pg.mixer.music.unload()
         trans_time = 0
         check = True
         transitioning = True
-        while transitioning:
 
+        while transitioning:
             events = pg.event.get()
             for event in events:
                 if event.type == pg.QUIT:

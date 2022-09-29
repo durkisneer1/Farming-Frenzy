@@ -49,10 +49,10 @@ class Chicken(pg.sprite.Sprite):
 
 class Sheep(pg.sprite.Sprite):
 
-    def __init__(self, display_surf, spawn_pos, group):
+    def __init__(self, display, spawn_pos, group):
         super().__init__(group)
+        self.display = display
 
-        self.display = display_surf
         color = random.randint(100, 255)
         self.surf = pg.Surface((4, 4))
         self.surf.fill((color, color, color))
@@ -68,7 +68,7 @@ class Sheep(pg.sprite.Sprite):
         self.vel.rotate_ip(360 * random.random())
 
     def input(self, mpos, mradius):
-
+        self.pos += self.vel
         self.rect.center = self.pos
 
         if self.rect.top <= 0:
@@ -80,18 +80,13 @@ class Sheep(pg.sprite.Sprite):
         elif self.rect.right >= WIDTH:
             self.vel.x = -abs(self.vel.x)
 
-        self.pos += self.vel
-
         if circles_overlap(self.pos, self.radius, mpos, mradius):
             new_vel = self.pos - mpos
             if new_vel.magnitude() > 0:
                 new_vel.scale_to_length(self.speed)
                 self.vel = new_vel
 
-        self.rect.center = self.pos
-
     def update(self, mpos, mradius):
-
         self.input(mpos, mradius)
         self.display.blit(self.surf, self.rect)
         self.surf.blit(self.face_surf, (1, 1))
@@ -99,8 +94,8 @@ class Sheep(pg.sprite.Sprite):
 class Cow(pg.sprite.Sprite):
     def __init__(self, display_surf, group):
         super().__init__(group)
-
         self.display = display_surf
+
         colors = ['black', 'brown', 'white']
         color = colors[random.randint(0, 2)]
         self.surf_list = import_folder(f'assets/cow/{color}')
@@ -113,7 +108,6 @@ class Cow(pg.sprite.Sprite):
         self.y = 0
 
     def cow_anim(self):
-
         frames = self.surf_list
         self.current_frame += self.anim_speed
         if self.current_frame >= len(frames):
@@ -124,6 +118,5 @@ class Cow(pg.sprite.Sprite):
         self.y += 1
     
     def update(self):
-
         self.cow_anim()
         self.display.blit(self.surf, self.rect)

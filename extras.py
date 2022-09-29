@@ -56,10 +56,10 @@ class AssemblyLine:
         self.display.blit(self.line_surf, (WIDTH - 12, 0))
 
 class Bucket(pg.sprite.Sprite):
-    def __init__(self, display_surf, group):
+    def __init__(self, display, group):
         super().__init__(group)
+        self.display = display
 
-        self.display = display_surf
         self.milked = False
 
         self.empty_surf = pg.image.load('assets/cow/buckets/empty.png').convert_alpha()
@@ -70,7 +70,6 @@ class Bucket(pg.sprite.Sprite):
         self.pos = pg.Vector2(WIDTH - 6, 0)
     
     def grab(self, mpressed, mpos, cursor_rect):
-        
         if not self.milked:
             if mpressed[0]:
                 if self.rect.colliderect(cursor_rect):
@@ -95,6 +94,5 @@ class Bucket(pg.sprite.Sprite):
                         self.rect.center = self.pos
 
     def update(self, mpressed, mpos, cursor_rect):
-        
         self.grab(mpressed, mpos, cursor_rect)
         self.display.blit(self.surf, self.rect)

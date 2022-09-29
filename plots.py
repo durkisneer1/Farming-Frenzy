@@ -7,9 +7,9 @@ from UI import ChknStats, ShpStats, CowStats
 from extras import Egg, BarnCollisions, AssemblyLine, Bucket
 
 class ChickenPlot:
-    def __init__(self, display_surf):
+    def __init__(self, display):
+        self.display = display
 
-        self.display = display_surf
         self.animal_group = pg.sprite.Group()
         self.egg_group = pg.sprite.Group()
         self.sorted_animals = None
@@ -26,19 +26,16 @@ class ChickenPlot:
         self.stats = ChknStats(self.display)
 
     def import_plot(self):
-
         self.grass = pg.image.load('assets/terrain/chicken/grass.png').convert()
         self.bg_fence = pg.image.load('assets/terrain/chicken/bg_fence.png').convert_alpha()
         self.fg_fence = pg.image.load('assets/terrain/chicken/fg_fence.png').convert_alpha()
 
     def spawn_chicken(self):
-
         Chicken(self.display, self.animal_group)
         self.egg_count -= 1
         self.stats.egg_count(self.egg_count)
 
     def kill_chicken(self, mpos):
-        
         for sprite in reversed(self.sorted_animals):
             if sprite.rect.collidepoint(mpos):
                 sprite.kill()
@@ -47,7 +44,6 @@ class ChickenPlot:
                 break
     
     def collect_egg(self, mpos):
-
         for sprite in reversed(self.sorted_eggs):
             if sprite.rect.collidepoint(mpos):
                 sprite.kill()
@@ -56,7 +52,6 @@ class ChickenPlot:
                 break
 
     def input(self, events, mpos):
-
         for event in events:
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -89,7 +84,6 @@ class ChickenPlot:
                             Egg(self.display, sprite.rect.center, self.egg_group)
 
     def update(self, events, mpos):
-
         self.display.blit(self.grass, (0, 0))
         self.display.blit(self.bg_fence, (0, 0))
 
@@ -106,11 +100,10 @@ class ChickenPlot:
         self.stats.update()
 
 class SheepPlot:
-    def __init__(self, display_surf):
+    def __init__(self, display):
+        self.display = display
 
-        self.display = display_surf
         self.sheep_group = pg.sprite.Group()
-
         self.level = 1
         self.spawn()
         self.import_plot()
@@ -120,11 +113,9 @@ class SheepPlot:
         self.mouse_radius = 4
 
         self.score = 0
-
         self.shp_stats = ShpStats(self.display, 10)
 
     def import_plot(self):
-
         self.grass = pg.image.load('assets/terrain/sheep/grass.png').convert()
         self.barn = pg.image.load('assets/terrain/sheep/barn.png').convert_alpha()
         self.goal = pg.image.load('assets/sheep/goal.png').convert_alpha()
@@ -133,17 +124,18 @@ class SheepPlot:
         self.goal_rect = self.goal.get_rect(topleft=(45, 23))
 
     def spawn(self):
-        
         if self.level == 1:
             for _ in range(10):
                 pos = (random.randint(2, WIDTH-23), random.randint(2, HEIGHT-4))
                 Sheep(self.display, pos, self.sheep_group)
+
         elif self.level == 2:
             self.score = 0
             self.shp_stats.shp_count(self.score, 20)
             for _ in range(20):
                 pos = (random.randint(2, WIDTH-23), random.randint(2, HEIGHT-4))
                 Sheep(self.display, pos, self.sheep_group)
+
         elif self.level == 3:
             self.score = 0
             self.shp_stats.shp_count(self.score, 40)
@@ -152,15 +144,14 @@ class SheepPlot:
                 Sheep(self.display, pos, self.sheep_group)
 
     def collect_score(self):
-
         for sprite in self.sheep_group:
             if sprite.rect.colliderect(self.goal_rect):
                 if (sprite.rect.right >= self.goal_rect.right
                     or sprite.rect.top <= self.goal_rect.top
                     or sprite.rect.bottom >= self.goal_rect.bottom):
                     sprite.kill()
-                    self.score += 1
 
+                    self.score += 1
                     if self.level == 1:
                         self.shp_stats.shp_count(self.score, 10)
                         if self.score == 10:
@@ -177,7 +168,6 @@ class SheepPlot:
                             self.level = 4 # end
 
     def collisions(self):
-
         for sprite1 in self.sheep_group:
             for sprite2 in self.sheep_group:
                 if sprite1 is not sprite2:
@@ -202,7 +192,6 @@ class SheepPlot:
                     sprite1.vel.x = -abs(sprite1.vel.x)
 
     def cursor_push(self, events):
-
         new_mouse_pos = None
         for event in events:
             if event.type == pg.MOUSEMOTION:
@@ -212,7 +201,6 @@ class SheepPlot:
             self.mouse_pos = new_mouse_pos
 
     def update(self, events):
-
         self.cursor_push(events)
         self.barn_collision.update()
         self.collect_score()
@@ -228,9 +216,9 @@ class SheepPlot:
         self.shp_stats.update()
 
 class CowPlot:
-    def __init__(self, display_surf):
+    def __init__(self, display):
+        self.display = display
 
-        self.display = display_surf
         self.cow_group = pg.sprite.Group()
         self.bucket_group = pg.sprite.Group()
         self.assembly_line = AssemblyLine(self.display)
@@ -245,13 +233,13 @@ class CowPlot:
         pg.time.set_timer(self.COW_SPAWN, 850) # set for 1000
 
     def cow_manager(self, events):
-
         if self.cows_left > 0:
             for event in events:
                 if event.type == self.COW_SPAWN:
                     Cow(self.display, self.cow_group)
                     self.cows_left -= 1
                     self.cow_stats.cow_count(self.cows_left)
+
         else:
             if len(self.cow_group) == 1:
                 for sprite in self.cow_group:
@@ -265,13 +253,13 @@ class CowPlot:
                     sprite.kill()
 
     def bucket_manager(self, mpressed, mpos):
-
         for sprite in self.bucket_group:
             if sprite.rect.top > HEIGHT:
                 sprite.kill()
                 if sprite.milked:
                     self.points += 5
                     self.cow_stats.cash_count(self.points)
+
             if not sprite.milked:
                 for cow in self.cow_group:
                     if cow.rect != None:
@@ -279,11 +267,11 @@ class CowPlot:
                             if sprite.rect.collidepoint(mpos):
                                 if not mpressed[0]:
                                     sprite.milked = True
+
             if sprite.milked and len(self.bucket_group) < 1 or len(self.bucket_group) == 0:
                 Bucket(self.display, self.bucket_group)
 
     def update(self, events, mpressed, mpos, cursor_rect):
-        
         self.display.fill((135, 100, 22))
         self.cow_manager(events)
         self.bucket_manager(mpressed, mpos)
@@ -293,4 +281,5 @@ class CowPlot:
         self.assembly_line.update()
         for sprite in self.bucket_group:
             sprite.update(mpressed, mpos, cursor_rect)
+            
         self.cow_stats.update()
