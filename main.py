@@ -42,8 +42,8 @@ class Game:
             clock.tick(30)
 
     def main(self):
-        screen.fill('black')
         self.trans_fade.alpha = 255
+        screen.fill("black")
 
         control_menu = True # set for True
         level_1 = False # set for False
@@ -72,6 +72,7 @@ class Game:
                     if ev.type == pg.KEYDOWN:
                         if ev.key == pg.K_RETURN:
                             control_menu = False
+                            screen.fill("black")
                             self.transition('  SELL\nCHICKEN!!', (9, 14))
                             level_1 = True
 
@@ -150,6 +151,10 @@ class Game:
                 if event.type == pg.QUIT:
                     pg.quit()
                     raise SystemExit
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        pg.quit()
+                        raise SystemExit
 
             self.current_time = pg.time.get_ticks()
             if trans_time == 0:
