@@ -1,9 +1,10 @@
 import pygame as pg
-from settings import *
+from settings import screen, clock
 from plots import ChickenPlot, SheepPlot, CowPlot
 from trans import Transition, LevelInfo
 from cursor import Cursor
 from screens import TitleScreen, ControlScreen
+
 
 class Game:
     def __init__(self):
@@ -34,7 +35,7 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         self.main()
-            
+
             self.title_screen.update()
             self.cursor.update(pg.mouse.get_pos())
 
@@ -45,13 +46,13 @@ class Game:
         self.trans_fade.alpha = 255
         screen.fill("black")
 
-        control_menu = True # set for True
-        level_1 = False # set for False
-        level_2 = False # set for False
-        level_3 = False # set for False
+        control_menu = True  # set for True
+        level_1 = False  # set for False
+        level_2 = False  # set for False
+        level_3 = False  # set for False
         back_to_menu = False
         running = True
-        
+
         while running:
             events = pg.event.get()
             for event in events:
@@ -63,8 +64,8 @@ class Game:
                         pg.quit()
                         raise SystemExit
 
-            mpos = pg.mouse.get_pos()
-            mpressed = pg.mouse.get_pressed()
+            mouse_pos = pg.mouse.get_pos()
+            mouse_pressed = pg.mouse.get_pressed()
 
             if control_menu:
                 self.control_screen.update()
@@ -73,57 +74,57 @@ class Game:
                         if ev.key == pg.K_RETURN:
                             control_menu = False
                             screen.fill("black")
-                            self.transition('  SELL\nCHICKEN!!', (9, 14))
+                            self.transition("  SELL\nCHICKEN!!", (9, 14))
                             level_1 = True
 
             elif level_1:
-                if self.music_played == False:
+                if not self.music_played:
                     pg.mixer.music.unload()
-                    pg.mixer.music.load('audio/music/Lay Down And Egg.mp3')
+                    pg.mixer.music.load("audio/music/Lay Down And Egg.mp3")
                     pg.mixer.music.play(-1)
                     self.music_played = True
 
-                self.chicken_plot.update(events, mpos)
-                self.trans_fade.update('out')
+                self.chicken_plot.update(events, mouse_pos)
+                self.trans_fade.update("out")
 
-                if self.chicken_plot.cash_count == 20: # set for 20
+                if self.chicken_plot.cash_count == 20:  # set for 20
                     level_1 = False
-                    self.transition(' Herd\nSheep!!', (15, 14))
+                    self.transition(" Herd\nSheep!!", (15, 14))
                     level_2 = True
                     self.music_played = False
 
             elif level_2:
-                if self.music_played == False:
+                if not self.music_played:
                     pg.mixer.music.unload()
-                    pg.mixer.music.load('audio/music/Peace Be Herd.mp3')
+                    pg.mixer.music.load("audio/music/Peace Be Herd.mp3")
                     pg.mixer.music.play(-1)
                     self.music_played = True
 
                 self.sheep_plot.update(events)
-                self.trans_fade.update('out')
+                self.trans_fade.update("out")
 
-                if self.sheep_plot.level == 4: # set for 4
+                if self.sheep_plot.level == 4:  # set for 4
                     level_2 = False
-                    self.transition(' Milk\nCows!!', (18, 14))
+                    self.transition(" Milk\nCows!!", (18, 14))
                     level_3 = True
                     self.music_played = False
 
             elif level_3:
-                if self.music_played == False:
+                if not self.music_played:
                     pg.mixer.music.unload()
-                    pg.mixer.music.load('audio/music/Rush Hour.mp3')
+                    pg.mixer.music.load("audio/music/Rush Hour.mp3")
                     pg.mixer.music.play(-1)
                     self.music_played = True
 
-                self.cow_plot.update(events, mpressed, mpos, self.cursor.rect)
-                self.trans_fade.update('out')
+                self.cow_plot.update(events, mouse_pressed, mouse_pos, self.cursor.rect)
+                self.trans_fade.update("out")
 
-                if self.cow_plot.points == 50: # set for 50
+                if self.cow_plot.points == 50:  # set for 50
                     level_3 = False
-                    self.transition(' You\nWon !!', (17, 14))
+                    self.transition(" You\nWon !!", (17, 14))
                     back_to_menu = True
                 elif self.cow_plot.final_cow:
-                    self.transition(' You\nLost .', (17, 14))
+                    self.transition(" You\nLost .", (17, 14))
                     running = False
                     self.music_played = False
                     self.cow_plot = CowPlot(screen)
@@ -133,8 +134,8 @@ class Game:
                 self.sheep_plot = SheepPlot(screen)
                 self.cow_plot = CowPlot(screen)
                 running = False
-                
-            self.cursor.update(mpos)
+
+            self.cursor.update(mouse_pos)
 
             pg.display.flip()
             clock.tick(30)
@@ -158,21 +159,22 @@ class Game:
 
             self.current_time = pg.time.get_ticks()
             if trans_time == 0:
-                self.trans_fade.update('in')
+                self.trans_fade.update("in")
             else:
-                if self.current_time - trans_time > 3000: # set for 3000
+                if self.current_time - trans_time > 3000:  # set for 3000
                     transitioning = False
 
             if self.trans_fade.alpha == 255:
-                if check == True:
+                if check:
                     trans_time = pg.time.get_ticks()
                     check = False
                 self.level_info = LevelInfo(screen, txt, pos)
                 self.level_info.update()
-            
+
             pg.display.flip()
             clock.tick(30)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     launch = Game()
     launch.menu()
