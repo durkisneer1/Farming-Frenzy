@@ -7,14 +7,14 @@ Link -> https://durkisneer.itch.io/farming-frenzy
 ### Level 1 Controls:
 * SPACE - Sell chicken
 * F - Hatch egg
-* LClick - Kill chicken
-* RClick - Collect egg
+* LMB - Kill chicken
+* RMB - Collect egg
 
 ### Level 2 Controls:
 * Cursor - Herd the sheep
 
 ### Level 3 Controls:
-* LClick - Drag and drop the buckets and sell milk
+* LMB - Drag and drop the buckets and sell milk
 
 ## Extra Info
 Submission for the 2022 LOWREZ Game Jam.
